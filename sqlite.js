@@ -7,5 +7,6 @@ const db = new sqlite3.Database("database.db");
 db.serialize(function(){
     db.run("DROP TABLE IF EXISTS ")
     db.run("CREATE TABLE stuff (thing TEXT)")
-
 });
+
+const stmt = db.prepare("INSERT INTO Stuff VALUES (?)");
