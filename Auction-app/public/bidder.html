@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bidder Page</title>
+  <link rel="stylesheet" href="styles.css"> 
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <h1>Bidder</h1>
+  
+  <!-- Name entry form -->
+  <div id="name-form">
+    <label>Enter your name: <input type="text" id="bidderName" required></label>
+    <button onclick="enterName()">Join Auction</button>
+  </div>
+
+  <!-- Waiting message and auction info -->
+  <div id="waiting-message" style="display:none; font-size: 30px;"> <p> &nbsp; Waiting for the next auction to begin... </p></div>
+
+  <!-- Auction interface for bidding -->
+  <div id="auction-interface" style="display:none;">
+    <h2>Auction for <span id="item-name"></span></h2>
+    <p>Time left: <span id="timer"></span> seconds</p>
+    <p>Current Highest Bid: $<span id="highestBid"></span> by <span id="highestBidder"></span></p>
+
+    <!-- Bid form -->
+    <label>Your Bid: <input type="number" id="bidPrice" min="1" required></label>
+    <button onclick="placeBid()">Place Bid</button>
+    <p id="bid-feedback"></p>
+  </div>
+
+  <script>
+    const socket = io();
+    let bidderName = '';
+
+    function enterName() {
+      bidderName = document.getElementById('bidderName').value;
+      if (bidderName) {
+        document.getElementById('name-form').style.display = 'none';
+        document.getElementById('waiting-message').style.display = 'block';
+      }
+    }
+
+    socket.on('auctionStarted', (data) => {
+      // Display auction info to bidder and reset input fields
+      document.getElementById('waiting-message').style.display = 'none';
+      document.getElementById('auction-interface').style.display = 'block';
+      document.getElementById('item-name').textContent = data.itemName;
+      document.getElementById('highestBid').textContent = data.startPrice;
+      document.getElementById('highestBidder').textContent = 'Auctioneer';
+
+      // Reset and re-enable bid input fields for the new auction
+      document.getElementById('bidPrice').value = ''; // Clear previous input
+      document.getElementById('bidPrice').disabled = false; // Re-enable input field
+      document.querySelector("button[onclick='placeBid()']").disabled = false; // Re-enable button
+      document.getElementById('bid-feedback').textContent = ''; // Clear any previous feedback
+
+      startCountdown(data.timeLimit);
+    });
+
+    function placeBid() {
+      const bidPrice = parseFloat(document.getElementById('bidPrice').value);
+      if (bidPrice && bidderName) {
+        socket.emit('newBid', { name: bidderName, price: bidPrice });
+      }
+    }
+
+    socket.on('bidUpdate', (data) => {
+      document.getElementById('highestBid').textContent = data.highestBid;
+      document.getElementById('highestBidder').textContent = data.highestBidder;
+      document.getElementById('bid-feedback').textContent = '';
+    });
+
+    socket.on('bidTooLow', () => {
+      document.getElementById('bid-feedback').textContent = 'Bid too low!';
+      document.getElementById('bid-feedback').style.color = 'red';
+    });
+
+    function startCountdown(seconds) {
+      let timeLeft = seconds;
+      document.getElementById('timer').textContent = timeLeft;
+      const interval = setInterval(() => {
+        timeLeft -= 1;
+        document.getElementById('timer').textContent = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          document.getElementById('bid-feedback').textContent = 'Auction ended!';
+          document.getElementById('bidPrice').disabled = true;
+          document.querySelector("button[onclick='placeBid()']").disabled = true;
+        }
+      }, 1000);
+    }
+
+    // Handle auction end
+    socket.on('auctionEnded', (result) => {
+      // Display winner message and reset for next auction
+      document.getElementById('bid-feedback').textContent = `Auction won by ${result.winner} with $${result.price}`;
+      document.getElementById('bid-feedback').style.color = 'green';
+      document.getElementById('auction-interface').style.display = 'none';
+      document.getElementById('waiting-message').style.display = 'block';
+    });
+  </script>
+</body>
+</html>

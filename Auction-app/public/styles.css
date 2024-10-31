@@ -1,0 +1,133 @@
+/* General Page Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  h1, h2 {
+    color: #333;
+    text-align: center;
+  }
+  
+  p {
+    font-size: 1.1em;
+    color: #555;
+  }
+  
+  /* Auction Form and Interface Styling */
+  #auction-form, #auction-interface, #name-form {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 400px;
+    width: 100%;
+    margin: 10px;
+  }
+  
+  #auction-form label, #auction-interface label, #name-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  input[type="text"], input[type="number"], input[type="range"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  #timeDisplay {
+    font-weight: bold;
+  }
+  
+  /* Auctioneer Timer and Bid Info Styling */
+  #timer, #highestBid, #highestBidder {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #007bff;
+  }
+  
+  #bid-feedback {
+    font-size: 1em;
+    margin-top: 10px;
+  }
+  
+  #bid-feedback.green {
+    color: green;
+  }
+  
+  #bid-feedback.red {
+    color: red;
+  }
+  
+  /* Waiting Message Styling */
+  #waiting-message {
+    font-size: 30px;
+    text-align: center;
+    color: #888;
+  }
+
+  /* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  table, th, td {
+    border: 1px solid #ddd;
+  }
+  
+  th, td {
+    padding: 12px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  #bidderTable, #bidHistoryTable {
+    max-width: 500px;
+    margin: 10px auto;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  

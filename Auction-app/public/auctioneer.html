@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Auctioneer Page</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <h1>Auctioneer &nbsp;</h1>
+
+  <!-- Auction Form -->
+  <div id="auction-form">
+    <label>Item Name: <input type="text" id="itemName" required></label><br>
+    <label>Starting Price: <input type="number" id="startPrice" min="1" required></label><br>
+    <label>Time Limit (seconds): 
+      <input type="range" id="timeLimit" min="10" max="80" step="10" value="30">
+      <span id="timeDisplay">30</span>
+    </label><br>
+    <button onclick="startAuction()">Start Auction</button>
+  </div>
+
+  <!-- Auction Interface -->
+  <div id="auction-info" style="display:none;">
+    <h2>Auction for <span id="item-name"></span></h2>
+    <p>Time left: <span id="timer"></span> seconds</p>
+    <p>Highest Bid: $<span id="highestBid"></span> by <span id="highestBidder"></span></p>
+    <p>Total Bids: <span id="totalBids">0</span></p>
+
+    <!-- Bidder Table -->
+    <h3>Bidder Details</h3>
+    <table id="bidderTable">
+      <thead>
+        <tr>
+          <th>Bidder Name</th>
+          <th>Highest Bid</th>
+          <th>Number of Bids</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <!-- Bid History Table -->
+    <h3>Bid History</h3>
+    <table id="bidHistoryTable">
+      <thead>
+        <tr>
+          <th>Bidder Name</th>
+          <th>Bid Price</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <button id="newAuctionButton" onclick="resetAuction()" style="display:none;">Start New Auction</button>
+  </div>
+
+  <script>
+    const socket = io();
+    let auctionActive = false;
+
+    document.getElementById('timeLimit').addEventListener('input', (e) => {
+      document.getElementById('timeDisplay').textContent = e.target.value;
+    });
+
+    function startAuction() {
+      const itemName = document.getElementById('itemName').value;
+      const startPrice = parseFloat(document.getElementById('startPrice').value);
+      const timeLimit = parseInt(document.getElementById('timeLimit').value);
+
+      if (itemName && startPrice > 0 && !auctionActive) {
+        socket.emit('startAuction', { itemName, startPrice, timeLimit });
+        document.getElementById('auction-form').style.display = 'none';
+        document.getElementById('auction-info').style.display = 'block';
+        document.getElementById('item-name').textContent = itemName;
+        document.getElementById('highestBid').textContent = startPrice;
+        document.getElementById('highestBidder').textContent = 'Auctioneer';
+        auctionActive = true;
+        startCountdown(timeLimit);
+      }
+    }
+
+    function startCountdown(seconds) {
+      let timeLeft = seconds;
+      document.getElementById('timer').textContent = timeLeft;
+      const interval = setInterval(() => {
+        timeLeft -= 1;
+        document.getElementById('timer').textContent = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          socket.emit('endAuction');
+          auctionActive = false;
+          document.getElementById('newAuctionButton').style.display = 'inline';
+        }
+      }, 1000);
+    }
+
+    function resetAuction() {
+      document.getElementById('auction-form').style.display = 'block';
+      document.getElementById('auction-info').style.display = 'none';
+      document.getElementById('newAuctionButton').style.display = 'none';
+      document.getElementById('bidderTable').querySelector('tbody').innerHTML = '';
+      document.getElementById('bidHistoryTable').querySelector('tbody').innerHTML = '';
+      document.getElementById('totalBids').textContent = '0';
+    }
+
+    socket.on('bidUpdate', (data) => {
+      document.getElementById('highestBid').textContent = data.highestBid;
+      document.getElementById('highestBidder').textContent = data.highestBidder;
+
+      // Update Bidder Table
+      let bidderRow = document.querySelector(`#bidderTable tr[data-name="${data.highestBidder}"]`);
+      if (!bidderRow) {
+        bidderRow = document.createElement('tr');
+        bidderRow.setAttribute('data-name', data.highestBidder);
+        bidderRow.innerHTML = `
+          <td>${data.highestBidder}</td>
+          <td>${data.highestBid}</td>
+          <td>1</td>
+        `;
+        document.getElementById('bidderTable').querySelector('tbody').appendChild(bidderRow);
+      } else {
+        bidderRow.children[1].textContent = data.highestBid;
+        bidderRow.children[2].textContent = parseInt(bidderRow.children[2].textContent) + 1;
+      }
+
+      // Update Bid History
+      const historyRow = document.createElement('tr');
+      historyRow.innerHTML = `<td>${data.highestBidder}</td><td>${data.highestBid}</td>`;
+      document.getElementById('bidHistoryTable').querySelector('tbody').prepend(historyRow);
+
+      // Update Total Bids
+      document.getElementById('totalBids').textContent = parseInt(document.getElementById('totalBids').textContent) + 1;
+    });
+
+    socket.on('auctionEnded', (result) => {
+      alert(`Auction ended! Winner: ${result.winner} with $${result.price}`);
+    });
+  </script>
+</body>
+</html>
