@@ -1,0 +1,32 @@
+{{>header}}
+{{>navigation}}
+
+<div class="row">
+  <div class="leftcolumn">
+    <div class="card">
+<h1>Sign-Up</h1>
+
+{{#signup_success}}
+<p>{{signup_success}} <a href="/login">Login</a></p>
+{{/signup_success}}
+
+{{#signup_error}}
+<p style="color: red;">{{signup_error}}</p>
+{{/signup_error}}
+
+<form action="/signup/attemptsignup" method="POST">
+    <input type="text" name="username" placeholder="Username" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <button type="submit">Sign-Up</button>
+</form>
+
+<p>Already have an account? <a href="/login">Login</a></p>
+
+</div>
+</div>
+
+{{>sidebar}}
+</div>
+
+{{>footer}}
+
