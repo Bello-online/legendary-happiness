@@ -1,0 +1,56 @@
+.item {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 8px 0;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .item p {
+    margin: 4px 0;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .item a {
+    display: inline-block;
+    margin-top: 8px;
+    text-decoration: none;
+    color: #0070f3;
+    font-weight: bold;
+    transition: color 0.2s ease;
+  }
+  
+  .item a:hover {
+    color: #005bb5;
+  }
+  
+  .text {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .datetime, .author {
+    font-size: 0.9rem;
+    color: gray;
+    margin: 0.2rem 0;
+  }
+  
+  .link {
+    color: #1e90ff;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 0.5rem;
+    display: inline-block;
+  }
+  
+  .link:hover {
+    text-decoration: underline;
+  }

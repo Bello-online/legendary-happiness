@@ -1,0 +1,21 @@
+.nav {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  background-color: black;
+  padding: 1rem 0;
+  border-bottom: 1px solid black;
+}
+
+.link {
+  text-decoration: none;
+  color: var(--foreground);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.link.active {
+  color: #1e3a8a;
+  text-decoration: underline;
+  font-weight: bold;
+}

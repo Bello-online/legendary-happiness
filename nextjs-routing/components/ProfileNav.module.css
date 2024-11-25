@@ -1,0 +1,29 @@
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: #20229431;
+  padding: 1rem;
+  border-right: 1px solid #20229431;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.link {
+  text-decoration: none;
+  color: var(--foreground);
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.link:hover {
+  background-color: #e0e0e0;
+}
+
+.link.active {
+  background-color: #1e3a8a;
+  color: white;
+  font-weight: bold;
+}
